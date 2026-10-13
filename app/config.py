@@ -50,6 +50,24 @@ class Settings(BaseSettings):
     enable_web_search: bool = Field(default=True, alias="ENABLE_WEB_SEARCH")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
 
+    @field_validator("github_repository")
+    @classmethod
+    def sanitize_github_repository(cls, v: Optional[str]) -> Optional[str]:
+        if not v:
+            return v
+        v = v.strip()
+        if v.startswith("https://github.com/"):
+            v = v[len("https://github.com/"):]
+        elif v.startswith("http://github.com/"):
+            v = v[len("http://github.com/"):]
+        elif v.startswith("github.com/"):
+            v = v[len("github.com/"):]
+        elif v.startswith("git@github.com:"):
+            v = v[len("git@github.com:"):]
+        if v.endswith(".git"):
+            v = v[:-4]
+        return v.strip("/")
+
     @field_validator("publish_timezone")
     @classmethod
     def validate_timezone(cls, v: str) -> str:
