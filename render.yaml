@@ -24,7 +24,7 @@ services:
 
       # --- Model & Generation Controls ---
       - key: GROQ_MODEL
-        value: "llama-3.3-70b-versatile"
+        value: "qwen/qwen3.8-27b"
       - key: ENABLE_WEB_SEARCH
         value: "true"
       - key: MAX_POST_CHARACTERS
