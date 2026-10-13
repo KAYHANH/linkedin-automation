@@ -11,7 +11,7 @@ from app.config import get_settings
 from app.content import ContentGenerator
 from app.github_state import GitHubStateConflictError, GitHubStateManager
 from app.linkedin_client import LinkedInClient
-from app.models import DailyState, DraftStatus, ExecutionMode, PublicationStatus
+from app.models import DailyState, DraftStatus, ExecutionMode, GeneratedPost, PublicationStatus
 from app.research import ResearchEngine
 from app.safety import audit_post
 from app.topic_rotation import TopicRotationManager
@@ -142,7 +142,17 @@ def run_automation(mode: ExecutionMode, target_date_override: Optional[datetime.
         logger.info("Reusing existing saved draft from state for %s", date_str)
         final_post_text = existing_state.draft_content
         audit = audit_post(final_post_text, max_characters=settings.max_post_characters)
-        post_obj = None
+        first_p = final_post_text.split("\n\n")[0] if "\n\n" in final_post_text else final_post_text[:120]
+        post_obj = GeneratedPost(
+            text=final_post_text,
+            hook=first_p,
+            formula_used=existing_state.hook_formula or entry.hook_formula,
+            angle_used=existing_state.founder_angle or entry.founder_angle,
+            pillar_id=existing_state.pillar_id or pillar.id,
+            character_count=len(final_post_text),
+            content_hash=existing_state.content_hash or "reused_hash",
+            research_summary=research_result.summary
+        )
     else:
         logger.info("Generating new post draft via Groq...")
         generated_post = content_gen.generate_post(
@@ -185,6 +195,9 @@ def run_automation(mode: ExecutionMode, target_date_override: Optional[datetime.
         return 0
 
     elif mode == ExecutionMode.DRAFT:
+        if existing_state and existing_state.draft_status == DraftStatus.SAVED and existing_state.draft_content:
+            logger.info("Draft already successfully recorded in GitHub outbox for %s. Idempotent check passed.", date_str)
+            return 0
         logger.info("Saving draft and state to GitHub branch '%s'...", settings.github_state_branch)
         new_state = DailyState(
             date=date_str,
@@ -209,7 +222,7 @@ def run_automation(mode: ExecutionMode, target_date_override: Optional[datetime.
             date_str=date_str,
             entry=entry,
             pillar=pillar,
-            post=post_obj or generated_post,
+            post=post_obj,
             research=research_result,
             audit=audit
         )
