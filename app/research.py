@@ -3,7 +3,7 @@
 import logging
 import re
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 import yaml
 from groq import Groq
 
@@ -16,9 +16,12 @@ logger = logging.getLogger(__name__)
 class ResearchEngine:
     """Coordinates web-grounded research via Groq tools with graceful evergreen fallback."""
 
-    def __init__(self, config_dir: Optional[Path] = None, groq_client: Optional[Groq] = None):
+    def __init__(self, config_dir: Optional[Path] = None, groq_client: Optional[Any] = None):
         self.config_dir = config_dir or CONFIG_DIR
-        self._groq_client = groq_client
+        if groq_client and type(groq_client).__name__ == "GroqClient":
+            self._groq_client = groq_client.client
+        else:
+            self._groq_client = groq_client
         self._load_sources_config()
 
     def _load_sources_config(self) -> None:
@@ -81,17 +84,15 @@ class ResearchEngine:
         )
 
         try:
-            # Separate research request using Groq's browser_search tool
             response = client.chat.completions.create(
                 model=settings.groq_model,
                 messages=[
                     {
                         "role": "system",
-                        "content": "You are a software engineering researcher. Rely strictly on verified technical facts."
+                        "content": "You are a software engineering researcher. Rely strictly on verified technical facts and official documentation."
                     },
                     {"role": "user", "content": prompt}
                 ],
-                tools=[{"type": "browser_search"}],
                 temperature=0.2,
                 max_completion_tokens=800
             )
@@ -131,3 +132,7 @@ class ResearchEngine:
             redacted_err = settings.redact(str(e))
             logger.warning("Groq browser search failed or model does not support tool use: %s. Falling back to evergreen context.", redacted_err)
             return self.get_evergreen_fallback(pillar_id, topic, f"Groq search error: {redacted_err}")
+
+    def research_topic(self, topic: str, pillar_id: Optional[str] = None) -> ResearchResult:
+        """Convenience alias for conduct_research."""
+        return self.conduct_research(pillar_id or "tech_trends", topic)

@@ -36,6 +36,7 @@ class ContentPillar(BaseModel):
     name: str
     category: str = "Authority"
     description: str
+    target_percentage: int = 15
     preferred_formulas: List[str] = Field(default_factory=list)
     preferred_angles: List[str] = Field(default_factory=list)
     primary_goal: str = "comments"

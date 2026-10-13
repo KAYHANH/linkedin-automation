@@ -325,7 +325,7 @@ def generate_post(req: GeneratePostRequest, user: str = Depends(get_current_user
         pillar = rotation_mgr.pillars.get(req.pillar_id_override, pillar)
 
     # 1. Research
-    research_result = research_engine.research_topic(entry.topic)
+    research_result = research_engine.conduct_research(pillar.id, entry.topic)
 
     # 2. Generate
     facts = rotation_mgr.get_company_facts_for_pillar(pillar.id)
@@ -609,26 +609,40 @@ def get_calendar(
 def get_strategy(user: str = Depends(get_current_user)):
     """Pillars, target weights, company facts, and brand voice summary."""
     rotation_mgr = TopicRotationManager()
+
+    # Calculate actual percentage distribution across 30-day schedule
+    schedule_counts = {}
+    total_days = len(rotation_mgr.schedule_by_day) or 30
+    for entry in rotation_mgr.schedule_by_day.values():
+        schedule_counts[entry.pillar_id] = schedule_counts.get(entry.pillar_id, 0) + 1
+
     pillars_list = []
     for p_id, p in rotation_mgr.pillars.items():
+        count = schedule_counts.get(p.id, 0)
+        target_pct = round((count / total_days) * 100) if total_days else 12
         pillars_list.append({
             "id": p.id,
             "name": p.name,
-            "target_percentage": p.target_percentage,
+            "target_percentage": target_pct,
             "description": p.description,
-            "preferred_angles": p.preferred_angles,
-            "primary_goal": p.primary_goal,
-            "sample_topics": p.sample_topics
+            "preferred_angles": getattr(p, "preferred_angles", []),
+            "primary_goal": getattr(p, "primary_goal", "comments"),
+            "sample_topics": getattr(p, "sample_topics", [])
         })
 
     facts_summary = {}
-    for c_id, f in rotation_mgr.company_facts.items():
-        facts_summary[c_id] = {
-            "name": f.name,
-            "positioning": f.positioning,
-            "allowed_claims_count": len(f.allowed_claims),
-            "strictly_forbidden_count": len(f.strictly_forbidden)
-        }
+    companies = rotation_mgr.company_facts.get("companies", {})
+    if isinstance(companies, dict):
+        for c_id, c_data in companies.items():
+            if isinstance(c_data, dict):
+                allowed = c_data.get("allowed_talking_points", [])
+                forbidden = c_data.get("strictly_forbidden", [])
+                facts_summary[c_id] = {
+                    "name": c_data.get("name", c_id),
+                    "positioning": c_data.get("mission") or c_data.get("domain", ""),
+                    "allowed_claims_count": len(allowed),
+                    "strictly_forbidden_count": len(forbidden)
+                }
 
     return {
         "pillars": pillars_list,

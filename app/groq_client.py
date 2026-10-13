@@ -18,6 +18,11 @@ class GroqClient:
         self.api_key = api_key or settings.groq_api_key
         self._client = client or (Groq(api_key=self.api_key) if self.api_key else None)
 
+    @property
+    def client(self) -> Optional[Groq]:
+        """Access underlying official Groq SDK client instance."""
+        return self._client
+
     def generate_chat_completion(
         self,
         system_prompt: str,
