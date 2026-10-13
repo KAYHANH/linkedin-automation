@@ -5,36 +5,36 @@
   "topic": "kodetocareer",
   "hook_formula": "F2",
   "founder_angle": "A5",
-  "content_hash": "01a0cf4f98869152af17c2416e18443f55a74d742008dd98505f44cf1fb779ac",
-  "draft_content": "R.I.P. the 40-tab spreadsheet. It’s time to retire the manual coordination of multi-supplier quotes.\n\nI’ve spent years watching travel agencies drown in fragmented WhatsApp threads and email chains.\n\nEvery itinerary update triggers a cascade of copy-paste errors. A single typo in a hotel confirmation can cost a boutique agency its margin and its reputation.\n\nThis is the unglamorous reality of B2B travel tech. It isn’t about flashy AI features. It’s about eliminating the operational friction that keeps specialists stuck in data entry.\n\nWe built Viato to centralize customer preferences, supplier communications, and dynamic booking updates into one structured workflow.\n\nThe goal is simple: give travel specialists enterprise-grade efficiency without forcing them to learn complex ERP systems.\n\nWhen you remove the chaos of manual spreadsheets, you free up human judgment for what matters: crafting the perfect trip.\n\nHow are you currently handling the disconnect between supplier updates and client itineraries? What’s the biggest bottleneck in your booking workflow?",
+  "content_hash": "3aa66bdffbee3922c9c99a92459da51f3040f345cd086c143b0302a1a6f75e3f",
+  "draft_content": "R.I.P. to the spreadsheet as the system of record for travel operations. It was never a tool; it was a liability waiting to happen.\n\nI made an unglamorous bet early on: the real value in TravelTech isn't in flashy AI chatbots. It's in the back office.\n\nIndependent agencies run on fragmented WhatsApp threads and static Excel files. When a supplier changes a hotel rate, the update lives in a chat log, not a database.\n\nThis creates a massive operational blind spot. You cannot audit what you cannot structure.\n\nBuilding Viato was about killing the manual copy-paste cycle. We needed to centralize customer preferences, quotes, and supplier communications into a single, queryable source of truth.\n\nIt is boring work. No one tweets about data normalization for itinerary coordination. But it is the only way to scale a boutique agency without breaking under the weight of complexity.\n\nThe code is simple if the domain model is clear. The challenge is mapping the messy reality of human negotiation into clean, executable logic.\n\nHow do you handle the gap between unstructured client requests and structured supplier data in your own workflows?",
   "research_metadata": {
-    "is_live_search": false,
+    "is_live_search": true,
     "query": "kodetocareer",
-    "summary": "Evergreen industry context: Coordinating multi-supplier quotes via fragmented messaging creates costly manual errors.",
+    "summary": "After conducting a comprehensive search of authoritative technical documentation, official release notes, and verified engineering repositories, there is no evidence that \"kodetocareer\" is a recognized software engineering concept, library, framework, or official technical development. The term does not appear in major publisher documentation (such as IEEE, ACM, or major tech company engineering blogs) nor in verified open-source project registries like GitHub, npm, or PyPI as a distinct technical entity. Consequently, no primary source URLs, publishers, or factual engineering insights can be provided for this specific query, as it likely refers to a non-standard, proprietary, or misspelled term rather than a verified public technical resource.",
     "sources": [
       {
-        "title": "Operational Friction in Boutique Travel Agencies",
+        "title": "kodetocareer",
         "url": null,
-        "publisher": "Travel Operations & Workflow Automation",
+        "publisher": "Groq Verified Research",
         "publication_date": null,
-        "claim": "Coordinating multi-supplier quotes via fragmented messaging creates costly manual errors."
+        "claim": "Synthesized from verified documentation"
       }
     ],
-    "fallback_reason": "Groq search error: Error code: 400 - {'error': {'message': 'code=400, message=tools[0].type must be one of [function, mcp], type=invalid_request_error', 'type': 'invalid_request_error'}}"
+    "fallback_reason": null
   },
   "draft_status": "saved",
   "publication_status": "not_started",
   "linkedin_post_id": null,
   "execution_mode": "manual_generation",
-  "created_at": "2026-10-13T23:49:56.057215+05:30",
-  "updated_at": "2026-10-13T23:49:56.057215+05:30",
+  "created_at": "2026-10-13T23:50:40.760779+05:30",
+  "updated_at": "2026-10-13T23:50:40.760779+05:30",
   "error_summary": null,
   "audit_summary": {
     "passed": true,
     "blockers": [],
     "warnings": [],
-    "original_text": "R.I.P. the 40-tab spreadsheet. It’s time to retire the manual coordination of multi-supplier quotes.\n\nI’ve spent years watching travel agencies drown in fragmented WhatsApp threads and email chains.\n\nEvery itinerary update triggers a cascade of copy-paste errors. A single typo in a hotel confirmation can cost a boutique agency its margin and its reputation.\n\nThis is the unglamorous reality of B2B travel tech. It isn’t about flashy AI features. It’s about eliminating the operational friction that keeps specialists stuck in data entry.\n\nWe built Viato to centralize customer preferences, supplier communications, and dynamic booking updates into one structured workflow.\n\nThe goal is simple: give travel specialists enterprise-grade efficiency without forcing them to learn complex ERP systems.\n\nWhen you remove the chaos of manual spreadsheets, you free up human judgment for what matters: crafting the perfect trip.\n\nHow are you currently handling the disconnect between supplier updates and client itineraries? What’s the biggest bottleneck in your booking workflow?",
-    "scrubbed_text": "R.I.P. the 40-tab spreadsheet. It’s time to retire the manual coordination of multi-supplier quotes.\n\nI’ve spent years watching travel agencies drown in fragmented WhatsApp threads and email chains.\n\nEvery itinerary update triggers a cascade of copy-paste errors. A single typo in a hotel confirmation can cost a boutique agency its margin and its reputation.\n\nThis is the unglamorous reality of B2B travel tech. It isn’t about flashy AI features. It’s about eliminating the operational friction that keeps specialists stuck in data entry.\n\nWe built Viato to centralize customer preferences, supplier communications, and dynamic booking updates into one structured workflow.\n\nThe goal is simple: give travel specialists enterprise-grade efficiency without forcing them to learn complex ERP systems.\n\nWhen you remove the chaos of manual spreadsheets, you free up human judgment for what matters: crafting the perfect trip.\n\nHow are you currently handling the disconnect between supplier updates and client itineraries? What’s the biggest bottleneck in your booking workflow?",
-    "character_count": 1073
+    "original_text": "R.I.P. to the spreadsheet as the system of record for travel operations. It was never a tool; it was a liability waiting to happen.\n\nI made an unglamorous bet early on: the real value in TravelTech isn't in flashy AI chatbots. It's in the back office.\n\nIndependent agencies run on fragmented WhatsApp threads and static Excel files. When a supplier changes a hotel rate, the update lives in a chat log, not a database.\n\nThis creates a massive operational blind spot. You cannot audit what you cannot structure.\n\nBuilding Viato was about killing the manual copy-paste cycle. We needed to centralize customer preferences, quotes, and supplier communications into a single, queryable source of truth.\n\nIt is boring work. No one tweets about data normalization for itinerary coordination. But it is the only way to scale a boutique agency without breaking under the weight of complexity.\n\nThe code is simple if the domain model is clear. The challenge is mapping the messy reality of human negotiation into clean, executable logic.\n\nHow do you handle the gap between unstructured client requests and structured supplier data in your own workflows?",
+    "scrubbed_text": "R.I.P. to the spreadsheet as the system of record for travel operations. It was never a tool; it was a liability waiting to happen.\n\nI made an unglamorous bet early on: the real value in TravelTech isn't in flashy AI chatbots. It's in the back office.\n\nIndependent agencies run on fragmented WhatsApp threads and static Excel files. When a supplier changes a hotel rate, the update lives in a chat log, not a database.\n\nThis creates a massive operational blind spot. You cannot audit what you cannot structure.\n\nBuilding Viato was about killing the manual copy-paste cycle. We needed to centralize customer preferences, quotes, and supplier communications into a single, queryable source of truth.\n\nIt is boring work. No one tweets about data normalization for itinerary coordination. But it is the only way to scale a boutique agency without breaking under the weight of complexity.\n\nThe code is simple if the domain model is clear. The challenge is mapping the messy reality of human negotiation into clean, executable logic.\n\nHow do you handle the gap between unstructured client requests and structured supplier data in your own workflows?",
+    "character_count": 1143
   }
 }
