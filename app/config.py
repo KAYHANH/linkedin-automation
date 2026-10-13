@@ -50,6 +50,11 @@ class Settings(BaseSettings):
     enable_web_search: bool = Field(default=True, alias="ENABLE_WEB_SEARCH")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
 
+    # Dashboard & Web Application Auth
+    dashboard_username: str = Field(default="founder", alias="DASHBOARD_USERNAME")
+    dashboard_password_hash: Optional[str] = Field(default=None, alias="DASHBOARD_PASSWORD_HASH")
+    session_secret: str = Field(default="dev-session-secret-change-in-production-1234567890", alias="SESSION_SECRET")
+
     @field_validator("github_repository")
     @classmethod
     def sanitize_github_repository(cls, v: Optional[str]) -> Optional[str]:
@@ -101,6 +106,8 @@ class Settings(BaseSettings):
             self.linkedin_client_secret,
             self.linkedin_refresh_token,
             self.github_token,
+            self.dashboard_password_hash,
+            self.session_secret,
         ]:
             if val and len(val.strip()) > 3:
                 secrets.add(val.strip())

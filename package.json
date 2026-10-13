@@ -1,0 +1,14 @@
+{
+  "name": "founderos-linkedin-studio",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "pip install -r requirements.txt && cd frontend && npm install",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "uvicorn app.api:app --reload --port 8000",
+    "build:frontend": "cd frontend && npm run build",
+    "start": "uvicorn app.api:app --host 0.0.0.0 --port 8000",
+    "test:backend": "pytest tests -v",
+    "test:dry-run": "python -m app.main --dry-run"
+  }
+}

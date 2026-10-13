@@ -56,3 +56,8 @@ Thumbs.db
 *.log
 scratch/
 temp/
+
+# Node / Frontend
+node_modules/
+frontend/node_modules/
+.npm/

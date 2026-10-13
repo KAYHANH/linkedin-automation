@@ -168,3 +168,56 @@ class GitHubStateManager:
             commit_message=commit_msg,
             sha=existing_sha
         )
+
+    def list_directory(self, dir_path: str) -> list:
+        """List files in a directory on the state branch. Returns list of file metadata items."""
+        settings = get_settings()
+        if not self.repository:
+            raise GitHubStateError("GITHUB_REPOSITORY is missing. Cannot access GitHub state.")
+
+        url = f"{self.base_url}/repos/{self.repository}/contents/{dir_path.strip('/')}"
+        params = {"ref": self.branch}
+
+        try:
+            with httpx.Client(timeout=15.0) as client:
+                resp = client.get(url, headers=self._get_headers(), params=params)
+                if resp.status_code == 404:
+                    return []
+                elif resp.status_code == 200:
+                    data = resp.json()
+                    return data if isinstance(data, list) else [data]
+                else:
+                    redacted_body = settings.redact(resp.text)
+                    logger.warning("Error listing directory '%s': HTTP %d - %s", dir_path, resp.status_code, redacted_body)
+                    return []
+        except httpx.RequestError as e:
+            logger.warning("Network error listing directory '%s': %s", dir_path, settings.redact(str(e)))
+            return []
+
+    def delete_file(self, file_path: str, sha: str, commit_message: str) -> bool:
+        """Delete a file on the state branch."""
+        settings = get_settings()
+        if not self.repository:
+            raise GitHubStateError("GITHUB_REPOSITORY is missing. Cannot access GitHub state.")
+
+        url = f"{self.base_url}/repos/{self.repository}/contents/{file_path}"
+        payload = {
+            "message": settings.redact(commit_message),
+            "sha": sha,
+            "branch": self.branch
+        }
+
+        try:
+            with httpx.Client(timeout=15.0) as client:
+                resp = client.request("DELETE", url, headers=self._get_headers(), json=payload)
+                if resp.status_code in (200, 204):
+                    return True
+                elif resp.status_code == 404:
+                    return True
+                else:
+                    redacted_body = settings.redact(resp.text)
+                    raise GitHubStateError(f"GitHub API error deleting '{file_path}': HTTP {resp.status_code} - {redacted_body}")
+        except httpx.RequestError as e:
+            redacted_err = settings.redact(str(e))
+            raise GitHubStateError(f"Network error deleting '{file_path}': {redacted_err}") from None
+

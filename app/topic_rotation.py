@@ -128,3 +128,25 @@ class TopicRotationManager:
             ]
 
         return context
+
+    def get_kolkata_now(self) -> datetime:
+        """Alias for get_current_kolkata_date."""
+        return self.get_current_kolkata_date()
+
+    def get_entry_for_date(self, target_date: datetime) -> Tuple[CalendarEntry, ContentPillar]:
+        """Convenience helper returning (entry, pillar) for a target date."""
+        _, entry, pillar, _ = self.get_topic_for_date(target_date)
+        return entry, pillar
+
+    @property
+    def pillars(self) -> Dict[str, ContentPillar]:
+        """Property alias for pillars_by_id dictionary."""
+        return self.pillars_by_id
+
+    def get_company_facts_for_pillar(self, pillar_id: str) -> Dict[str, Any]:
+        """Alias for _extract_relevant_facts."""
+        return self._extract_relevant_facts(pillar_id)
+
+    def get_schedule_day(self, dt: datetime) -> int:
+        """Alias for get_day_index_for_date."""
+        return self.get_day_index_for_date(dt)
