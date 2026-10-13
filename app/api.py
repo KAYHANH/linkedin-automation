@@ -94,6 +94,7 @@ class PatchSettingsRequest(BaseModel):
 # -----------------------------------------------------------------------------
 
 @app.get("/healthz")
+@app.get("/api/health")
 def healthz():
     """Unauthenticated healthcheck returning service status without secrets."""
     settings = get_settings()
@@ -169,6 +170,7 @@ def get_session(request: Request):
 # -----------------------------------------------------------------------------
 
 @app.get("/api/v1/dashboard/summary")
+@app.get("/api/dashboard/summary")
 def get_dashboard_summary(user: str = Depends(get_current_user)):
     """Operational summary metrics derived from GitHub state and rotation calendar."""
     settings = get_settings()
@@ -273,6 +275,7 @@ def get_dashboard_health(user: str = Depends(get_current_user)):
 # -----------------------------------------------------------------------------
 
 @app.get("/api/v1/posts")
+@app.get("/api/drafts")
 def list_posts(user: str = Depends(get_current_user)):
     """List all saved drafts and states from GitHub state branch."""
     github_mgr = GitHubStateManager()
@@ -289,6 +292,7 @@ def list_posts(user: str = Depends(get_current_user)):
 
 
 @app.post("/api/v1/posts/generate")
+@app.post("/api/drafts/generate")
 def generate_post(req: GeneratePostRequest, user: str = Depends(get_current_user)):
     """Generate or regenerate post draft on demand via Groq with safety audit."""
     settings = get_settings()
@@ -379,6 +383,7 @@ def generate_post(req: GeneratePostRequest, user: str = Depends(get_current_user
 
 
 @app.get("/api/v1/posts/{date_or_id}")
+@app.get("/api/drafts/{date_or_id}")
 def get_post_detail(date_or_id: str, user: str = Depends(get_current_user)):
     """Fetch post details, state, and outbox markdown for a date."""
     github_mgr = GitHubStateManager()
@@ -395,6 +400,8 @@ def get_post_detail(date_or_id: str, user: str = Depends(get_current_user)):
 
 
 @app.patch("/api/v1/posts/{date_or_id}")
+@app.put("/api/drafts/{date_or_id}")
+@app.patch("/api/drafts/{date_or_id}")
 def update_post_text(date_or_id: str, req: UpdatePostRequest, user: str = Depends(get_current_user)):
     """Edit post text. Automatically re-audits and invalidates any prior approval."""
     settings = get_settings()
@@ -423,6 +430,7 @@ def update_post_text(date_or_id: str, req: UpdatePostRequest, user: str = Depend
 
 
 @app.post("/api/v1/posts/{date_or_id}/audit")
+@app.post("/api/drafts/{date_or_id}/audit")
 def audit_custom_text(date_or_id: str, req: AuditPostRequest, user: str = Depends(get_current_user)):
     """Run V3 humanizer safety and quality audit on provided text."""
     settings = get_settings()
@@ -431,6 +439,7 @@ def audit_custom_text(date_or_id: str, req: AuditPostRequest, user: str = Depend
 
 
 @app.post("/api/v1/posts/{date_or_id}/approve")
+@app.post("/api/drafts/{date_or_id}/approve")
 def approve_post(date_or_id: str, user: str = Depends(get_current_user)):
     """Approve post for publishing, cryptographically binding to exact content hash."""
     github_mgr = GitHubStateManager()
@@ -449,11 +458,24 @@ def approve_post(date_or_id: str, user: str = Depends(get_current_user)):
 
 
 @app.post("/api/v1/posts/{date_or_id}/publish")
+@app.post("/api/drafts/{date_or_id}/publish")
 def publish_post_now(date_or_id: str, user: str = Depends(get_current_user)):
     """Publish approved post directly to LinkedIn with at-most-once safety claim."""
     settings = get_settings()
     github_mgr = GitHubStateManager()
     linkedin_client = LinkedInClient()
+
+    # Safety guard: live publishing requires DRY_RUN=false and AUTO_PUBLISH=true
+    if settings.dry_run:
+        raise HTTPException(
+            status_code=400,
+            detail="Publishing is blocked: DRY_RUN is active. Set DRY_RUN=false and AUTO_PUBLISH=true in Render environment to enable publishing."
+        )
+    if not settings.auto_publish:
+        raise HTTPException(
+            status_code=400,
+            detail="Publishing is blocked: AUTO_PUBLISH is false. Enable AUTO_PUBLISH=true in Render environment to publish."
+        )
 
     state, sha = github_mgr.load_daily_state(date_or_id)
     if not state or not state.draft_content:
@@ -506,8 +528,9 @@ def publish_post_now(date_or_id: str, user: str = Depends(get_current_user)):
 
 
 @app.post("/api/v1/posts/{date_or_id}/discard")
+@app.post("/api/drafts/{date_or_id}/reject")
 def discard_post(date_or_id: str, user: str = Depends(get_current_user)):
-    """Discard a draft."""
+    """Discard or reject a draft."""
     github_mgr = GitHubStateManager()
     state, sha = github_mgr.load_daily_state(date_or_id)
     if not state:
@@ -525,15 +548,30 @@ def discard_post(date_or_id: str, user: str = Depends(get_current_user)):
 # -----------------------------------------------------------------------------
 
 @app.get("/api/v1/calendar")
-def get_calendar(user: str = Depends(get_current_user)):
-    """30-day calendar overview with topic assignments and draft status."""
+@app.get("/api/calendar")
+def get_calendar(
+    start: Optional[str] = None,
+    end: Optional[str] = None,
+    user: str = Depends(get_current_user)
+):
+    """Calendar overview with topic assignments and draft status."""
     rotation_mgr = TopicRotationManager()
     github_mgr = GitHubStateManager()
     now_kolkata = rotation_mgr.get_kolkata_now()
 
+    if start and end:
+        try:
+            start_dt = datetime.datetime.strptime(start, "%Y-%m-%d").replace(tzinfo=now_kolkata.tzinfo)
+            end_dt = datetime.datetime.strptime(end, "%Y-%m-%d").replace(tzinfo=now_kolkata.tzinfo)
+            days_range = (end_dt.date() - start_dt.date()).days + 1
+            date_list = [start_dt + datetime.timedelta(days=d) for d in range(max(1, min(days_range, 60)))]
+        except ValueError:
+            date_list = [now_kolkata + datetime.timedelta(days=offset) for offset in range(-7, 24)]
+    else:
+        date_list = [now_kolkata + datetime.timedelta(days=offset) for offset in range(-7, 24)]
+
     calendar_items = []
-    for day_offset in range(-7, 24):  # Last 7 days to next 23 days
-        dt = now_kolkata + datetime.timedelta(days=day_offset)
+    for dt in date_list:
         date_str = dt.strftime("%Y-%m-%d")
         entry, pillar = rotation_mgr.get_entry_for_date(dt)
         st, _ = github_mgr.load_daily_state(date_str)
@@ -554,7 +592,7 @@ def get_calendar(user: str = Depends(get_current_user)):
         calendar_items.append({
             "date": date_str,
             "day": entry.day,
-            "is_today": day_offset == 0,
+            "is_today": dt.date() == now_kolkata.date(),
             "pillar_id": pillar.id,
             "pillar_name": pillar.name,
             "topic": entry.topic,
@@ -604,6 +642,7 @@ def get_strategy(user: str = Depends(get_current_user)):
 # -----------------------------------------------------------------------------
 
 @app.get("/api/v1/history")
+@app.get("/api/history")
 def get_history(user: str = Depends(get_current_user)):
     """History of published posts only."""
     github_mgr = GitHubStateManager()
@@ -653,6 +692,14 @@ def get_runs(user: str = Depends(get_current_user)):
     return {"runs": runs}
 
 
+@app.get("/api/runs/latest")
+def get_latest_run(user: str = Depends(get_current_user)):
+    """Operational run log of the latest execution."""
+    data = get_runs(user=user)
+    runs = data.get("runs", [])
+    return {"latest_run": runs[0] if runs else None}
+
+
 # -----------------------------------------------------------------------------
 # Settings & Integrations
 # -----------------------------------------------------------------------------
@@ -679,6 +726,7 @@ def get_settings_view(user: str = Depends(get_current_user)):
 
 
 @app.get("/api/v1/integrations/status")
+@app.get("/api/settings/status")
 def get_integrations_status(user: str = Depends(get_current_user)):
     """Status of all third-party integrations."""
     settings = get_settings()
@@ -700,6 +748,32 @@ def get_integrations_status(user: str = Depends(get_current_user)):
             "branch": settings.github_state_branch,
             "status": "connected" if settings.github_token else "missing_token"
         }
+    }
+
+
+@app.post("/api/settings/check-config")
+def check_config(user: str = Depends(get_current_user)):
+    """Health check for external credentials without exposing secret values."""
+    settings = get_settings()
+    return {
+        "groq": {
+            "configured": bool(settings.groq_api_key),
+            "model": settings.groq_model,
+            "status": "ready" if settings.groq_api_key else "missing_key"
+        },
+        "linkedin": {
+            "configured": bool(settings.linkedin_access_token and settings.linkedin_author_urn),
+            "author_urn": settings.linkedin_author_urn,
+            "endpoint": settings.linkedin_endpoint_style,
+            "status": "connected" if settings.linkedin_access_token else "missing_token"
+        },
+        "github": {
+            "configured": bool(settings.github_token and settings.github_repository),
+            "repository": settings.github_repository,
+            "branch": settings.github_state_branch,
+            "status": "connected" if settings.github_token else "missing_token"
+        },
+        "all_valid": bool(settings.groq_api_key and settings.github_token and settings.github_repository)
     }
 
 

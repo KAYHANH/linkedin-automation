@@ -52,6 +52,7 @@ class Settings(BaseSettings):
 
     # Dashboard & Web Application Auth
     dashboard_username: str = Field(default="founder", alias="DASHBOARD_USERNAME")
+    dashboard_password: Optional[str] = Field(default=None, alias="DASHBOARD_PASSWORD")
     dashboard_password_hash: Optional[str] = Field(default=None, alias="DASHBOARD_PASSWORD_HASH")
     session_secret: str = Field(default="dev-session-secret-change-in-production-1234567890", alias="SESSION_SECRET")
 
@@ -106,6 +107,7 @@ class Settings(BaseSettings):
             self.linkedin_client_secret,
             self.linkedin_refresh_token,
             self.github_token,
+            self.dashboard_password,
             self.dashboard_password_hash,
             self.session_secret,
         ]:

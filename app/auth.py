@@ -43,7 +43,11 @@ def hash_password(password: str) -> str:
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a plain password against a bcrypt hash."""
+    """Verify a plain password against bcrypt hash or direct plain text setting."""
+    settings = get_settings()
+    if settings.dashboard_password and settings.dashboard_password.strip():
+        # Constant-time comparison for plain text DASHBOARD_PASSWORD configured in Render
+        return hmac.compare_digest(plain_password, settings.dashboard_password.strip())
     try:
         return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
     except Exception as e:

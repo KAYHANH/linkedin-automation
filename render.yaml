@@ -1,8 +1,8 @@
 # ==============================================================================
 # Render Blueprint Specification — FounderOS LinkedIn Studio
-# Services:
-#   1. Web Service: FastAPI application serving compiled React UI & REST API
-#   2. Cron Job: Daily automated content generation & publication (09:00 IST)
+# Unified Docker Architecture:
+#   1. Web Service: Multi-stage Docker container running React SPA + FastAPI
+#   2. Cron Job: Identical container executing daily CLI run at 09:00 IST (03:30 UTC)
 # ==============================================================================
 services:
   # ----------------------------------------------------------------------------
@@ -10,13 +10,10 @@ services:
   # ----------------------------------------------------------------------------
   - type: web
     name: founderos-linkedin-studio
-    runtime: python
-    buildCommand: cd frontend && npm install && npm run build && cd .. && pip install --upgrade pip && pip install -r requirements.txt
-    startCommand: uvicorn app.api:app --host 0.0.0.0 --port $PORT
+    env: docker
+    dockerfilePath: ./Dockerfile
     plan: free
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.12.0
       - key: PUBLISH_TIMEZONE
         value: Asia/Kolkata
       - key: GROQ_MODEL
@@ -33,7 +30,9 @@ services:
         value: rest/posts
       - key: DASHBOARD_USERNAME
         value: founder
-      # --- Sensitive Secrets (Enter in Render Dashboard) ---
+      # --- Sensitive Secrets (Configure in Render Dashboard Environment Settings) ---
+      - key: DASHBOARD_PASSWORD
+        sync: false
       - key: DASHBOARD_PASSWORD_HASH
         sync: false
       - key: SESSION_SECRET
@@ -54,18 +53,16 @@ services:
         sync: false
 
   # ----------------------------------------------------------------------------
-  # 2. Daily Cron Job (30 3 * * * UTC = 09:00 AM Asia/Kolkata)
+  # 2. Daily Automation Cron Job (30 3 * * * UTC = 09:00 AM Asia/Kolkata)
   # ----------------------------------------------------------------------------
   - type: cron
     name: groq-linkedin-daily-publisher
-    runtime: python
-    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
-    startCommand: python -m app.main --publish
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerCommand: python -m app.main --publish
     schedule: "30 3 * * *"
     plan: starter
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.12.0
       - key: PUBLISH_TIMEZONE
         value: Asia/Kolkata
       - key: GROQ_MODEL
@@ -80,7 +77,7 @@ services:
         value: "202501"
       - key: LINKEDIN_ENDPOINT_STYLE
         value: rest/posts
-      # --- Sensitive Secrets ---
+      # --- Sensitive Secrets (Configure in Render Dashboard Environment Settings) ---
       - key: GROQ_API_KEY
         sync: false
       - key: GITHUB_TOKEN

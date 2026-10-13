@@ -145,3 +145,71 @@ def test_post_audit_endpoint(client, auth_headers):
     assert "passed" in audit_data
     rules = [b["rule"] for b in audit_data["blockers"]]
     assert "reveal_bridge" in rules
+
+
+def test_login_plain_text_dashboard_password(client, monkeypatch):
+    """When DASHBOARD_PASSWORD is set in environment, login succeeds with it."""
+    from app.config import get_settings
+    settings = get_settings()
+    monkeypatch.setattr(settings, "dashboard_password", "render_super_secret_123")
+    monkeypatch.setattr(settings, "dashboard_username", "founder")
+
+    # Correct password succeeds
+    resp = client.post("/api/v1/auth/login", json={"username": "founder", "password": "render_super_secret_123"})
+    assert resp.status_code == 200
+    assert resp.json()["success"] is True
+
+    # Wrong password fails
+    resp = client.post("/api/v1/auth/login", json={"username": "founder", "password": "wrong_password"})
+    assert resp.status_code == 401
+
+
+def test_api_aliases_matching_section_5(client, auth_headers):
+    """Verify /api/* route aliases function identically to /api/v1/*."""
+    # /api/health
+    resp = client.get("/api/health")
+    assert resp.status_code == 200
+    assert resp.json()["status"] == "ok"
+
+    with patch("app.github_state.GitHubStateManager.list_directory", return_value=[]), \
+         patch("app.github_state.GitHubStateManager.load_daily_state", return_value=(None, None)):
+        # /api/dashboard/summary
+        resp = client.get("/api/dashboard/summary", headers=auth_headers)
+        assert resp.status_code == 200
+
+        # /api/calendar
+        resp = client.get("/api/calendar?start=2026-10-10&end=2026-10-15", headers=auth_headers)
+        assert resp.status_code == 200
+        assert "calendar" in resp.json()
+
+        # /api/drafts
+        resp = client.get("/api/drafts", headers=auth_headers)
+        assert resp.status_code == 200
+        assert "posts" in resp.json()
+
+        # /api/history
+        resp = client.get("/api/history", headers=auth_headers)
+        assert resp.status_code == 200
+        assert "history" in resp.json()
+
+        # /api/runs/latest
+        resp = client.get("/api/runs/latest", headers=auth_headers)
+        assert resp.status_code == 200
+        assert "latest_run" in resp.json()
+
+        # /api/settings/status
+        resp = client.get("/api/settings/status", headers=auth_headers)
+        assert resp.status_code == 200
+        assert "groq" in resp.json()
+
+        # /api/settings/check-config
+        resp = client.post("/api/settings/check-config", headers=auth_headers)
+        assert resp.status_code == 200
+        assert "all_valid" in resp.json()
+
+
+def test_publish_blocked_when_dry_run_or_auto_publish_false(client, auth_headers):
+    """Publishing via API is blocked when DRY_RUN=true or AUTO_PUBLISH=false."""
+    resp = client.post("/api/drafts/2026-10-13/publish", headers=auth_headers)
+    assert resp.status_code == 400
+    assert "Publishing is blocked" in resp.json()["detail"]
