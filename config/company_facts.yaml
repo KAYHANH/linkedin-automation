@@ -1,0 +1,54 @@
+# ==============================================================================
+# Verified Company & Founder Facts
+# Strict Rule: Content generation must ONLY reference facts declared here.
+# Under NO circumstances should the system fabricate revenue, user counts,
+# funding, clients, partnerships, or personal anecdotes.
+# ==============================================================================
+
+founder:
+  title: "Software Architect & Technology Founder"
+  location: "India"
+  areas_of_expertise:
+    - "Full-stack software engineering and distributed architecture"
+    - "AI workflows, LLM tool integration, and practical automation"
+    - "Developer education and skills-based assessment"
+    - "SaaS platform design and cloud engineering"
+  perspective:
+    - "Prefers verifiable skills over academic credentials"
+    - "Values tested software reliability over marketing velocity"
+    - "Advocates for responsible AI engineering with human judgment in the loop"
+
+companies:
+  kodetocareer:
+    name: "KodeToCareer"
+    mission: "Democratizing career advancement through skills-first engineering education and hands-on capability validation."
+    domain: "Technology education, career development, and technical hiring"
+    core_pillars:
+      - "Hands-on coding experience over passive theory"
+      - "Bridging the gap between university syllabi and real-world production expectations"
+      - "Objective skill validation to help candidates stand out regardless of college tier"
+    allowed_talking_points:
+      - "Challenges junior engineers face when transitioning into modern production environments"
+      - "Why traditional degree screening overlooks capable, self-taught problem solvers"
+      - "Structuring effective project-based learning and code review habits"
+    strictly_forbidden:
+      - "Inventing student placement percentages or salary figures"
+      - "Inventing specific hiring partner contracts unless explicitly recorded"
+      - "Fictitious student testimonials"
+
+  viato:
+    name: "Viato"
+    mission: "Modernizing operations, customer itinerary coordination, and workflow automation for travel agencies and operators."
+    domain: "Travel technology (TravelTech) and B2B SaaS"
+    core_pillars:
+      - "Eliminating manual spreadsheets and fragmented WhatsApp/email booking threads"
+      - "Centralizing customer preferences, quotes, itineraries, and supplier communications"
+      - "Empowering boutique travel specialists with enterprise-grade operational efficiency"
+    allowed_talking_points:
+      - "Operational bottlenecks in traditional independent travel agencies"
+      - "Complexities of managing multi-vendor travel itineraries and dynamic booking updates"
+      - "Designing intuitive SaaS for non-technical domain operators"
+    strictly_forbidden:
+      - "Inventing total booking volumes, Gross Merchandise Value (GMV), or user counts"
+      - "Inventing named agency customer case studies without explicit approval"
+      - "Claiming partnerships with global airlines or hotel chains that do not exist"

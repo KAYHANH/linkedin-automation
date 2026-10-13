@@ -1,0 +1,61 @@
+# ==============================================================================
+# Render Blueprint Specification
+# Service: Daily Scheduled Cron Job for LinkedIn Automation
+# Schedule: 30 3 * * * (09:00 Asia/Kolkata / 03:30 UTC)
+# ==============================================================================
+services:
+  - type: cron
+    name: groq-linkedin-daily-publisher
+    runtime: python
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: python -m app.main --publish
+    schedule: "30 3 * * *"
+    envVars:
+      # --- Non-Negotiable Safety Defaults ---
+      # Crucial: Keeps publishing disabled by default until explicitly flipped in Render dashboard
+      - key: AUTO_PUBLISH
+        value: "false"
+      - key: DRY_RUN
+        value: "true"
+
+      # --- Timezone & Schedule ---
+      - key: PUBLISH_TIMEZONE
+        value: "Asia/Kolkata"
+
+      # --- Model & Generation Controls ---
+      - key: GROQ_MODEL
+        value: "llama-3.3-70b-versatile"
+      - key: ENABLE_WEB_SEARCH
+        value: "true"
+      - key: MAX_POST_CHARACTERS
+        value: "2200"
+      - key: LOG_LEVEL
+        value: "INFO"
+
+      # --- GitHub State Branch ---
+      - key: GITHUB_STATE_BRANCH
+        value: "automation-state"
+
+      # --- LinkedIn API Version ---
+      - key: LINKEDIN_API_VERSION
+        value: "202501"
+      - key: LINKEDIN_ENDPOINT_STYLE
+        value: "rest/posts"
+
+      # --- Sensitive Secrets (Entered via Render Dashboard - Never committed) ---
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GITHUB_REPOSITORY
+        sync: false
+      - key: LINKEDIN_ACCESS_TOKEN
+        sync: false
+      - key: LINKEDIN_AUTHOR_URN
+        sync: false
+      - key: LINKEDIN_CLIENT_ID
+        sync: false
+      - key: LINKEDIN_CLIENT_SECRET
+        sync: false
+      - key: LINKEDIN_REFRESH_TOKEN
+        sync: false

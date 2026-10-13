@@ -1,0 +1,294 @@
+# ==============================================================================
+# Content Pillars and 30-Day Rotation Schedule
+# Balances 8 core themes across a monthly cadence.
+# Upstream Reference: linkedin-content-planner & founder-topics
+# ==============================================================================
+
+pillars:
+  - id: tech_trends
+    name: "Technology Industry & Software Trends"
+    category: "Authority"
+    description: "Deep dive into architectural shifts, cloud infrastructure evolution, legacy modernization, and engineering best practices."
+    preferred_formulas: ["F10", "F7", "F18", "F20"]
+    preferred_angles: ["A1", "A10"]
+    primary_goal: "saves"
+    sample_topics:
+      - "Why architectural simplicity often beats microservice sprawl in mid-stage systems"
+      - "The real cost of cloud vendor lock-in versus developer velocity"
+      - "Evaluating database consistency models when scaling read-heavy workloads"
+      - "Why type safety and schema validation are the best documentation you can write"
+
+  - id: ai_agents_automation
+    name: "AI Models, Tools, Agents & Business Automation"
+    category: "Authority"
+    description: "Pragmatic application of LLMs, agentic patterns, deterministic tooling, and operational automation without speculative hype."
+    preferred_formulas: ["F1", "F17", "F5", "F10"]
+    preferred_angles: ["A6", "A9"]
+    primary_goal: "comments"
+    sample_topics:
+      - "Why agent loops require strict circuit breakers and deterministic boundaries"
+      - "Separating LLM reasoning from code execution in production workflows"
+      - "Evaluating small, specialized open models against monolithic frontier APIs"
+      - "The difference between toy AI demos and production-grade reliability"
+
+  - id: startup_saas_strategy
+    name: "Startup Building, Product Strategy & SaaS"
+    category: "Narrative"
+    description: "Hard-won lessons in bootstrapping, validating customer problems, pricing mechanisms, and SaaS product engineering."
+    preferred_formulas: ["F7", "F3", "F4", "F18"]
+    preferred_angles: ["A1", "A4", "A5"]
+    primary_goal: "reposts"
+    sample_topics:
+      - "The trap of building features for power users before solving the onboarding friction"
+      - "Why pricing reflects your product's category label more than its underlying code"
+      - "Deciding what NOT to build: the discipline of ruthless MVP scope control"
+      - "Managing technical debt when early runway requires shipping today"
+
+  - id: kodetocareer_education
+    name: "KodeToCareer & Skills-First Engineering Careers"
+    category: "Mission / Perspective"
+    description: "Challenges in developer education, why practical ability beats degree pedigree, and mentorship insights."
+    preferred_formulas: ["F8", "F15", "F12", "F3"]
+    preferred_angles: ["A7", "A2"]
+    primary_goal: "comments"
+    sample_topics:
+      - "Why college coding curriculums often fail to prepare candidates for git, CI/CD, and real codebases"
+      - "How junior developers can showcase genuine problem-solving without 5 years of resume keywords"
+      - "The importance of code review etiquette: learning to give and receive constructive technical critique"
+      - "Why hands-on debugging skills correlate higher with job success than algorithmic memorization"
+
+  - id: viato_travel_tech
+    name: "Viato & Travel Agency Workflow Automation"
+    category: "Domain Deep-Dive"
+    description: "Unpacking the operational friction of boutique travel operators, itinerary logistics, and vertical SaaS opportunities."
+    preferred_formulas: ["F2", "F13", "F17", "F7"]
+    preferred_angles: ["A1", "A5"]
+    primary_goal: "saves"
+    sample_topics:
+      - "Why independent travel agencies still drown in disconnected WhatsApp chats and spreadsheets"
+      - "Designing software for non-technical domain operators: UX simplicity is the core feature"
+      - "The hidden complexity of multi-vendor itinerary coordination and real-time adjustments"
+      - "Why vertical SaaS succeeds by replacing manual coordination rather than inventing new behaviors"
+
+  - id: hiring_future_of_work
+    name: "Recruitment, Hiring Workflows & The Future of Work"
+    category: "Authority"
+    description: "Analyzing modern technical hiring, resume screening inefficiencies, work-sample tests, and high-trust engineering teams."
+    preferred_formulas: ["F10", "F19", "F18", "F4"]
+    preferred_angles: ["A8", "A9"]
+    primary_goal: "comments"
+    sample_topics:
+      - "Why leetcode interviews test puzzle memorization rather than actual software engineering ability"
+      - "How to conduct an asynchronous take-home project evaluation that respects candidate time"
+      - "The breakdown of automated ATS keyword filters and the rise of verified skill portfolios"
+      - "What senior engineers actually look for when evaluating an engineering culture"
+
+  - id: responsible_ai_security
+    name: "Responsible AI, Privacy, Security & Human Judgment"
+    category: "Governance"
+    description: "Data privacy in LLM systems, secure credential hygiene, guardrails, and why human oversight remains indispensable."
+    preferred_formulas: ["F10", "F1", "F18", "F20"]
+    preferred_angles: ["A6", "A10"]
+    primary_goal: "reposts"
+    sample_topics:
+      - "Prompt injection and data exfiltration: treating LLM inputs like untrusted user SQL queries"
+      - "Why autonomous AI agents still require human-in-the-loop validation for irreversible actions"
+      - "Handling privacy regulations and data retention when integrating third-party AI APIs"
+      - "The illusion of perfect AI confidence: building systems that know when to fail gracefully"
+
+  - id: developer_productivity
+    name: "Practical Productivity & Software Craftsmanship"
+    category: "Narrative / Practical"
+    description: "Personal engineering habits, terminal tooling, automated testing discipline, and deep work strategies."
+    preferred_formulas: ["F16", "F11", "F5", "F7"]
+    preferred_angles: ["A3", "A7"]
+    primary_goal: "likes"
+    sample_topics:
+      - "Why unit test coverage is a developer velocity tool, not just a management compliance metric"
+      - "The cognitive cost of context switching: why batching code reviews protects flow state"
+      - "Simple command-line utilities and shell scripting that save hours every single week"
+      - "The habit of writing clean technical notes and design docs before touching keyboard to code"
+
+# 30-Day Calendar Schedule (Day 1 to Day 30)
+# Evenly distributed across all 8 pillars
+schedule_30_days:
+  - day: 1
+    pillar_id: "tech_trends"
+    hook_formula: "F10"
+    founder_angle: "A10"
+    goal: "saves"
+    topic: "Why architectural simplicity often beats microservice sprawl in mid-stage engineering teams."
+  - day: 2
+    pillar_id: "ai_agents_automation"
+    hook_formula: "F17"
+    founder_angle: "A9"
+    goal: "comments"
+    topic: "Comparing deterministic code with LLM agents: why mission-critical workflows need clear guardrails."
+  - day: 3
+    pillar_id: "startup_saas_strategy"
+    hook_formula: "F7"
+    founder_angle: "A4"
+    goal: "reposts"
+    topic: "The scarce-shots math of early SaaS: why focus is the only leverage a lean startup has."
+  - day: 4
+    pillar_id: "kodetocareer_education"
+    hook_formula: "F8"
+    founder_angle: "A7"
+    goal: "comments"
+    topic: "Why practical capability validation matters more than university pedigree in hiring developers."
+  - day: 5
+    pillar_id: "viato_travel_tech"
+    hook_formula: "F17"
+    founder_angle: "A1"
+    goal: "saves"
+    topic: "The operational bottlenecks of independent travel agencies and how workflow software eliminates spreadsheet chaos."
+  - day: 6
+    pillar_id: "hiring_future_of_work"
+    hook_formula: "F10"
+    founder_angle: "A8"
+    goal: "comments"
+    topic: "Why resume keyword screening fails to surface high-agency software engineers."
+  - day: 7
+    pillar_id: "responsible_ai_security"
+    hook_formula: "F18"
+    founder_angle: "A6"
+    goal: "reposts"
+    topic: "Why human judgment remains the essential layer in automated decision systems."
+  - day: 8
+    pillar_id: "developer_productivity"
+    hook_formula: "F5"
+    founder_angle: "A3"
+    goal: "likes"
+    topic: "The engineering discipline of automated testing: saving days of debugging with modest upfront coverage."
+  - day: 9
+    pillar_id: "tech_trends"
+    hook_formula: "F7"
+    founder_angle: "A1"
+    goal: "saves"
+    topic: "Evaluating the real financial and cognitive overhead of premature cloud infrastructure complexity."
+  - day: 10
+    pillar_id: "ai_agents_automation"
+    hook_formula: "F1"
+    founder_angle: "A6"
+    goal: "comments"
+    topic: "Platform risk and AI APIs: building resilient abstractions when provider pricing and models change."
+  - day: 11
+    pillar_id: "startup_saas_strategy"
+    hook_formula: "F18"
+    founder_angle: "A5"
+    goal: "reposts"
+    topic: "The unglamorous bet of solving operational back-office friction rather than chasing shiny consumer trends."
+  - day: 12
+    pillar_id: "kodetocareer_education"
+    hook_formula: "F15"
+    founder_angle: "A2"
+    goal: "saves"
+    topic: "Demystifying production software development for aspiring engineers: what code review actually looks for."
+  - day: 13
+    pillar_id: "hiring_future_of_work"
+    hook_formula: "F19"
+    founder_angle: "A9"
+    goal: "comments"
+    topic: "Work-sample assessments versus whiteboard algorithmic riddles: which actually predicts on-the-job output."
+  - day: 14
+    pillar_id: "responsible_ai_security"
+    hook_formula: "F10"
+    founder_angle: "A10"
+    goal: "reposts"
+    topic: "Treating LLM inputs and prompt injections with the same zero-trust rigor as raw database queries."
+  - day: 15
+    pillar_id: "developer_productivity"
+    hook_formula: "F16"
+    founder_angle: "A7"
+    goal: "likes"
+    topic: "The value of writing clear design documents before writing code: thinking through state transitions early."
+  - day: 16
+    pillar_id: "viato_travel_tech"
+    hook_formula: "F2"
+    founder_angle: "A5"
+    goal: "saves"
+    topic: "Moving beyond messy spreadsheets: how purpose-built travel agency software transforms itinerary management."
+  - day: 17
+    pillar_id: "tech_trends"
+    hook_formula: "F18"
+    founder_angle: "A10"
+    goal: "saves"
+    topic: "Why boring, proven technologies often deliver the highest operational stability for growing startups."
+  - day: 18
+    pillar_id: "ai_agents_automation"
+    hook_formula: "F5"
+    founder_angle: "A9"
+    goal: "comments"
+    topic: "Structuring multi-step agent pipelines with explicit state machines and reproducible logging."
+  - day: 19
+    pillar_id: "startup_saas_strategy"
+    hook_formula: "F3"
+    founder_angle: "A4"
+    goal: "reposts"
+    topic: "Reflecting on early product assumptions: the discipline of listening to customer complaints over polite praise."
+  - day: 20
+    pillar_id: "kodetocareer_education"
+    hook_formula: "F12"
+    founder_angle: "A7"
+    goal: "comments"
+    topic: "Encouraging early-career engineers to build public projects and master the fundamentals of debugging."
+  - day: 21
+    pillar_id: "hiring_future_of_work"
+    hook_formula: "F18"
+    founder_angle: "A8"
+    goal: "comments"
+    topic: "The false binary in hiring between pedigree and potential: building objective evaluation rubrics."
+  - day: 22
+    pillar_id: "responsible_ai_security"
+    hook_formula: "F20"
+    founder_angle: "A6"
+    goal: "reposts"
+    topic: "The diverging trajectories of organizations adopting hasty AI versus those implementing measured guardrails."
+  - day: 23
+    pillar_id: "developer_productivity"
+    hook_formula: "F11"
+    founder_angle: "A3"
+    goal: "likes"
+    topic: "The silent cost of constant interruption: protecting uninterrupted development focus hours."
+  - day: 24
+    pillar_id: "tech_trends"
+    hook_formula: "F20"
+    founder_angle: "A1"
+    goal: "saves"
+    topic: "How modular code architecture keeps maintenance costs flat as feature complexity scales."
+  - day: 25
+    pillar_id: "ai_agents_automation"
+    hook_formula: "F10"
+    founder_angle: "A6"
+    goal: "comments"
+    topic: "Why context window management and structured outputs matter more than raw parameter count in LLM apps."
+  - day: 26
+    pillar_id: "viato_travel_tech"
+    hook_formula: "F13"
+    founder_angle: "A1"
+    goal: "saves"
+    topic: "How modern travel SaaS replaces fragmented supplier messaging with centralized itinerary coordination."
+  - day: 27
+    pillar_id: "startup_saas_strategy"
+    hook_formula: "F4"
+    founder_angle: "A5"
+    goal: "reposts"
+    topic: "An honest look at early product prioritization: learning to say no to distracting one-off feature requests."
+  - day: 28
+    pillar_id: "hiring_future_of_work"
+    hook_formula: "F4"
+    founder_angle: "A9"
+    goal: "comments"
+    topic: "The challenge of finding self-directed problem solvers and how team onboarding shapes retention."
+  - day: 29
+    pillar_id: "responsible_ai_security"
+    hook_formula: "F1"
+    founder_angle: "A10"
+    goal: "reposts"
+    topic: "Why data sanitization and privacy guarantees must be designed on day one in AI architectures."
+  - day: 30
+    pillar_id: "developer_productivity"
+    hook_formula: "F7"
+    founder_angle: "A3"
+    goal: "likes"
+    topic: "The compound benefits of investing 30 minutes every week into automating repetitive developer tasks."

@@ -1,0 +1,77 @@
+# ==============================================================================
+# Verified Primary Sources and Research Criteria
+# Used to validate incoming technical references and news citations.
+# ==============================================================================
+
+research_guidelines:
+  preference: "Primary sources, official release notes, engineering blogs, and benchmark docs"
+  synthesis_rule: "Summarize in original wording. Never reproduce copyrighted articles verbatim."
+  anti_hallucination: "If web research tool fails or is disabled, fallback to evergreen topic. Never pretend a source was checked."
+
+allowed_source_categories:
+  official_docs_and_releases:
+    description: "Primary engineering documentation and official release notes"
+    domains:
+      - "docs.python.org"
+      - "console.groq.com"
+      - "github.blog"
+      - "aws.amazon.com/blogs"
+      - "cloud.google.com/blog"
+      - "microsoft.com/en-us/research"
+      - "developer.linkedin.com"
+      - "openai.com/index"
+      - "anthropic.com/news"
+
+  reputable_technical_publications:
+    description: "Established engineering journals and industry analysis"
+    domains:
+      - "arxiv.org"
+      - "acm.org"
+      - "ieee.org"
+      - "martinfowler.com"
+      - "pragmaticengineer.com"
+      - "newsletter.pragmaticengineer.com"
+      - "stackoverflow.blog"
+      - "changelog.com"
+
+  standards_bodies_and_security:
+    description: "Security and standard compliance resources"
+    domains:
+      - "cve.org"
+      - "owasp.org"
+      - "nist.gov"
+      - "w3.org"
+
+evergreen_fallback_topics:
+  tech_trends:
+    title: "Principles of Distributed Systems and Architectural Simplicity"
+    claim: "Premature optimization and unnecessary distributed components increase cognitive and maintenance overhead."
+    source_name: "Industry Architecture Fundamentals (Martin Fowler / Brooks Law)"
+  ai_agents_automation:
+    title: "Deterministic Guardrails for Autonomous LLM Workflows"
+    claim: "Production LLM agents require bounded schemas, finite retries, and human oversight for safety."
+    source_name: "AI Engineering Best Practices"
+  startup_saas_strategy:
+    title: "Lean SaaS Prioritization and Ruthless Scope Control"
+    claim: "Early SaaS traction depends on solving a high-friction customer workflow well rather than sprawling feature breadth."
+    source_name: "SaaS Product Strategy Fundamentals"
+  kodetocareer_education:
+    title: "Skills-First Engineering Competency over Credential Screening"
+    claim: "Hands-on debugging and code literacy correlate more strongly with real-world output than academic test scores."
+    source_name: "Engineering Pedagogy & Workforce Analytics"
+  viato_travel_tech:
+    title: "Operational Friction in Boutique Travel Agencies"
+    claim: "Coordinating multi-supplier quotes via fragmented messaging creates costly manual errors."
+    source_name: "Travel Operations & Workflow Automation"
+  hiring_future_of_work:
+    title: "Work-Sample Technical Assessments"
+    claim: "Practical, bounded engineering tasks provide higher predictive validity than whiteboard puzzle memorization."
+    source_name: "Technical Recruiting Research"
+  responsible_ai_security:
+    title: "Zero-Trust Principles for LLM Integrations"
+    claim: "Treating external model completions and prompts as untrusted input prevents security injection attacks."
+    source_name: "OWASP Top 10 for LLM Applications"
+  developer_productivity:
+    title: "Developer Flow State and Context Switching Costs"
+    claim: "Protecting uninterrupted focus blocks and investing in automated tests dramatically accelerates delivery."
+    source_name: "Software Engineering Productivity Research"
