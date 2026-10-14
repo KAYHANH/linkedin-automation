@@ -28,6 +28,8 @@ class DraftStatus(str, Enum):
     GENERATED = "generated"
     AUDITED = "audited"
     SAVED = "saved"
+    APPROVED = "approved"
+    REJECTED = "rejected"
 
 
 class ContentPillar(BaseModel):
