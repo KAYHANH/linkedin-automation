@@ -22,12 +22,12 @@
     ],
     "fallback_reason": null
   },
-  "draft_status": "saved",
+  "draft_status": "approved",
   "publication_status": "not_started",
   "linkedin_post_id": null,
   "execution_mode": "manual_generation",
   "created_at": "2026-10-14T11:04:20.495636+05:30",
-  "updated_at": "2026-10-14T11:04:20.495636+05:30",
+  "updated_at": "2026-10-14T05:38:11.864354+00:00",
   "error_summary": null,
   "audit_summary": {
     "passed": true,
