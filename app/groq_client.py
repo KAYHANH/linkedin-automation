@@ -28,10 +28,10 @@ class GroqClient:
         system_prompt: str,
         user_prompt: str,
         temperature: float = 0.7,
-        max_tokens: int = 1500,
+        max_tokens: int = 700,
         response_format: Optional[Dict[str, str]] = None
     ) -> str:
-        """Call Groq API with robust error handling and token redaction."""
+        """Call Groq API with robust error handling, token limit adaptation, and redaction."""
         settings = get_settings()
 
         if not self._client:
@@ -42,11 +42,12 @@ class GroqClient:
             {"role": "user", "content": user_prompt}
         ]
 
+        safe_max_tokens = min(max_tokens, 700)
         kwargs: Dict[str, Any] = {
             "model": settings.groq_model,
             "messages": messages,
             "temperature": temperature,
-            "max_completion_tokens": max_tokens,
+            "max_completion_tokens": safe_max_tokens,
         }
 
         if response_format:
@@ -73,7 +74,17 @@ class GroqClient:
                 if "does not exist" in err_str or "model_not_found" in err_str or "404" in err_str:
                     logger.warning("Groq model %s not available, attempting fallback...", candidate_model)
                     continue
-                # For auth, rate limits, or validation errors, do not loop
+                # If OTPM or max_tokens exceeded, retry with 500 tokens
+                if ("reduce max_tokens" in err_str or "otpm" in err_str or "limit 1000" in err_str) and kwargs.get("max_completion_tokens", 700) > 500:
+                    logger.warning("Groq output token limit reached. Retrying with 500 completion tokens...")
+                    kwargs["max_completion_tokens"] = 500
+                    try:
+                        response = self._client.chat.completions.create(**kwargs)
+                        choice = response.choices[0]
+                        content = choice.message.content or ""
+                        return content.strip()
+                    except Exception as retry_err:
+                        last_error = retry_err
                 break
 
         redacted_msg = settings.redact(str(last_error))

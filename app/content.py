@@ -77,7 +77,7 @@ class ContentGenerator:
             system_prompt=system_prompt,
             user_prompt=user_prompt,
             temperature=0.6,
-            max_tokens=1400,
+            max_tokens=700,
             response_format={"type": "json_object"}
         )
 
@@ -203,7 +203,7 @@ class ContentGenerator:
                 system_prompt=system_prompt,
                 user_prompt=repair_prompt,
                 temperature=0.3,
-                max_tokens=1400,
+                max_tokens=700,
                 response_format={"type": "json_object"}
             )
             parsed = self._parse_json_response(repaired_json)
