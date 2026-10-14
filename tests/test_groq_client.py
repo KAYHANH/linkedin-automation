@@ -41,3 +41,22 @@ def test_groq_client_error_redaction():
     err_str = str(exc_info.value)
     assert secret_key not in err_str
     assert "[REDACTED]" in err_str or "[REDACTED_GROQ_KEY]" in err_str
+
+
+def test_groq_client_model_fallback():
+    mock_sdk = MagicMock()
+    mock_choice = MagicMock()
+    mock_choice.message.content = '{"post_text": "Fallback succeeded."}'
+    mock_resp = MagicMock()
+    mock_resp.choices = [mock_choice]
+
+    # First call fails with 404 / model does not exist, second call succeeds
+    mock_sdk.chat.completions.create.side_effect = [
+        Exception("Error code: 404 - The model llama-3.3-70b-versatile does not exist"),
+        mock_resp
+    ]
+
+    client = GroqClient(api_key="mock_key", client=mock_sdk)
+    content = client.generate_chat_completion("System", "User")
+    assert "Fallback succeeded." in content
+    assert mock_sdk.chat.completions.create.call_count == 2

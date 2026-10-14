@@ -52,12 +52,30 @@ class GroqClient:
         if response_format:
             kwargs["response_format"] = response_format
 
-        try:
-            response = self._client.chat.completions.create(**kwargs)
-            choice = response.choices[0]
-            content = choice.message.content or ""
-            return content.strip()
-        except Exception as e:
-            redacted_msg = settings.redact(str(e))
-            logger.error("Groq API error during generation: %s", redacted_msg)
-            raise RuntimeError(f"Groq API call failed: {redacted_msg}") from None
+        models_to_try = [settings.groq_model]
+        fallbacks = ["qwen/qwen3.8-27b", "openai/gpt-oss-120b", "openai/gpt-oss-20b"]
+        for fb in fallbacks:
+            if fb not in models_to_try:
+                models_to_try.append(fb)
+
+        last_error = None
+        for candidate_model in models_to_try:
+            kwargs["model"] = candidate_model
+            try:
+                response = self._client.chat.completions.create(**kwargs)
+                choice = response.choices[0]
+                content = choice.message.content or ""
+                return content.strip()
+            except Exception as e:
+                err_str = str(e).lower()
+                last_error = e
+                # Fallback only if the model is not recognized or not available
+                if "does not exist" in err_str or "model_not_found" in err_str or "404" in err_str:
+                    logger.warning("Groq model %s not available, attempting fallback...", candidate_model)
+                    continue
+                # For auth, rate limits, or validation errors, do not loop
+                break
+
+        redacted_msg = settings.redact(str(last_error))
+        logger.error("Groq API error during generation: %s", redacted_msg)
+        raise RuntimeError(f"Groq API call failed: {redacted_msg}") from None

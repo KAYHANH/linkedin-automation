@@ -26,7 +26,7 @@ class Settings(BaseSettings):
 
     # Groq API
     groq_api_key: Optional[str] = Field(default=None, alias="GROQ_API_KEY")
-    groq_model: str = Field(default="llama-3.3-70b-versatile", alias="GROQ_MODEL")
+    groq_model: str = Field(default="qwen/qwen3.8-27b", alias="GROQ_MODEL")
 
     # LinkedIn Official API
     linkedin_access_token: Optional[str] = Field(default=None, alias="LINKEDIN_ACCESS_TOKEN")
