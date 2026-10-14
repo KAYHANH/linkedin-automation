@@ -101,8 +101,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ connections, mode = "draft_onl
         <div className="space-y-2 text-xs">
           <div className="flex items-center justify-between">
             <span className="text-slate-600">Groq LLM</span>
-            <span className="flex items-center font-medium text-emerald-600">
-              <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Ready
+            <span className={`flex items-center font-medium ${connections?.groq === "configured" ? "text-emerald-600" : "text-amber-600"}`}>
+              {connections?.groq === "configured" ? (
+                <>
+                  <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Ready
+                </>
+              ) : (
+                <>
+                  <AlertCircle className="w-3.5 h-3.5 mr-1" /> Not set
+                </>
+              )}
             </span>
           </div>
           <div className="flex items-center justify-between">
@@ -121,8 +129,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ connections, mode = "draft_onl
           </div>
           <div className="flex items-center justify-between">
             <span className="text-slate-600">GitHub State</span>
-            <span className="flex items-center font-medium text-emerald-600">
-              <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Synced
+            <span className={`flex items-center font-medium ${connections?.github === "healthy" ? "text-emerald-600" : "text-amber-600"}`}>
+              {connections?.github === "healthy" ? (
+                <>
+                  <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Synced
+                </>
+              ) : (
+                <>
+                  <AlertCircle className="w-3.5 h-3.5 mr-1" /> Not set
+                </>
+              )}
             </span>
           </div>
         </div>

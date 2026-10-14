@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 import pytz
 
@@ -57,6 +58,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    settings = get_settings()
+    redacted_err = settings.redact(str(exc))
+    logger.exception("Unhandled server exception on %s: %s", request.url.path, redacted_err)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"Server error: {redacted_err}"}
+    )
+
 
 # -----------------------------------------------------------------------------
 # Schemas
@@ -296,6 +309,18 @@ def list_posts(user: str = Depends(get_current_user)):
 def generate_post(req: GeneratePostRequest, user: str = Depends(get_current_user)):
     """Generate or regenerate post draft on demand via Groq with safety audit."""
     settings = get_settings()
+
+    if not settings.groq_api_key:
+        raise HTTPException(
+            status_code=400,
+            detail="GROQ_API_KEY is not configured. Please add your GROQ_API_KEY to Render Environment settings."
+        )
+    if not settings.github_token or not settings.github_repository:
+        raise HTTPException(
+            status_code=400,
+            detail="GITHUB_TOKEN or GITHUB_REPOSITORY is missing. Please configure GitHub credentials in Render Environment settings."
+        )
+
     rotation_mgr = TopicRotationManager()
     github_mgr = GitHubStateManager()
     groq_client = GroqClient()
@@ -324,62 +349,72 @@ def generate_post(req: GeneratePostRequest, user: str = Depends(get_current_user
     if req.pillar_id_override:
         pillar = rotation_mgr.pillars.get(req.pillar_id_override, pillar)
 
-    # 1. Research
-    research_result = research_engine.conduct_research(pillar.id, entry.topic)
+    try:
+        # 1. Research
+        research_result = research_engine.conduct_research(pillar.id, entry.topic)
 
-    # 2. Generate
-    facts = rotation_mgr.get_company_facts_for_pillar(pillar.id)
-    generated = content_gen.generate_post(
-        entry=entry,
-        pillar=pillar,
-        facts=facts,
-        research=research_result,
-        brand_profile_md=rotation_mgr.brand_profile_md
-    )
+        # 2. Generate
+        facts = rotation_mgr.get_company_facts_for_pillar(pillar.id)
+        generated = content_gen.generate_post(
+            entry=entry,
+            pillar=pillar,
+            facts=facts,
+            research=research_result,
+            brand_profile_md=rotation_mgr.brand_profile_md
+        )
 
-    # 3. Audit
-    audit = audit_post(generated.text, max_characters=settings.max_post_characters)
+        # 3. Audit
+        audit = audit_post(generated.text, max_characters=settings.max_post_characters)
 
-    # 4. Save to GitHub
-    now_iso = now_kolkata.isoformat()
-    _, existing_sha = github_mgr.load_daily_state(date_str)
+        # 4. Save to GitHub
+        now_iso = now_kolkata.isoformat()
+        _, existing_sha = github_mgr.load_daily_state(date_str)
 
-    state = DailyState(
-        date=date_str,
-        pillar_id=pillar.id,
-        pillar_name=pillar.name,
-        topic=entry.topic,
-        hook_formula=entry.hook_formula,
-        founder_angle=entry.founder_angle,
-        content_hash=generated.content_hash,
-        draft_content=generated.text,
-        research_metadata=research_result.model_dump(),
-        draft_status=DraftStatus.SAVED,
-        publication_status=PublicationStatus.NOT_STARTED,
-        execution_mode="manual_generation",
-        created_at=now_iso,
-        updated_at=now_iso,
-        audit_summary=audit.model_dump()
-    )
+        state = DailyState(
+            date=date_str,
+            pillar_id=pillar.id,
+            pillar_name=pillar.name,
+            topic=entry.topic,
+            hook_formula=entry.hook_formula,
+            founder_angle=entry.founder_angle,
+            content_hash=generated.content_hash,
+            draft_content=generated.text,
+            research_metadata=research_result.model_dump(),
+            draft_status=DraftStatus.SAVED,
+            publication_status=PublicationStatus.NOT_STARTED,
+            execution_mode="manual_generation",
+            created_at=now_iso,
+            updated_at=now_iso,
+            audit_summary=audit.model_dump()
+        )
 
-    outbox_md = content_gen.format_outbox_markdown(
-        date_str=date_str,
-        entry=entry,
-        pillar=pillar,
-        post=generated,
-        research=research_result,
-        audit=audit
-    )
+        outbox_md = content_gen.format_outbox_markdown(
+            date_str=date_str,
+            entry=entry,
+            pillar=pillar,
+            post=generated,
+            research=research_result,
+            audit=audit
+        )
 
-    github_mgr.save_daily_state(state, sha=existing_sha)
-    github_mgr.save_outbox_markdown(date_str, outbox_md)
+        github_mgr.save_daily_state(state, sha=existing_sha)
+        github_mgr.save_outbox_markdown(date_str, outbox_md)
 
-    return {
-        "success": True,
-        "state": state.model_dump(),
-        "audit": audit.model_dump(),
-        "outbox_markdown": outbox_md
-    }
+        return {
+            "success": True,
+            "state": state.model_dump(),
+            "audit": audit.model_dump(),
+            "outbox_markdown": outbox_md
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        redacted_msg = settings.redact(str(e))
+        logger.exception("Error during draft generation: %s", redacted_msg)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Draft generation failed: {redacted_msg}"
+        )
 
 
 @app.get("/api/v1/posts/{date_or_id}")
